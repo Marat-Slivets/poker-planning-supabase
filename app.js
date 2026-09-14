@@ -291,16 +291,16 @@
       tick();
     }
 
-    function setTimer(secs) {
+    async function setTimer(secs) {
       if (!isHost()) return;
       const now = Date.now();
-      sb.from('rooms').update({ timer: { duration: secs, startAt: now, endAt: now + secs * 1000 } })
+      await sb.from('rooms').update({ timer: { duration: secs, startAt: now, endAt: now + secs * 1000 } })
         .eq('id', roomId);
     }
 
-    function stopTimer() {
+    async function stopTimer() {
       if (!isHost()) return;
-      sb.from('rooms').update({ timer: null }).eq('id', roomId);
+      await sb.from('rooms').update({ timer: null }).eq('id', roomId);
     }
 
     function tick() {
@@ -329,9 +329,9 @@
             lastTimerEnded = true;
             chime(CHIME_END, 0.16, 0.26);
             const endedAt = t.endAt;
-            setTimeout(function autoStop() {
+            setTimeout(async function autoStop() {
               if (room.timer && room.timer.endAt === endedAt && isHost()) {
-                sb.from('rooms').update({ timer: null }).eq('id', roomId);
+                await sb.from('rooms').update({ timer: null }).eq('id', roomId);
               }
             }, 1600);
           }
@@ -539,38 +539,38 @@
 
     /* ---------- операции ---------- */
 
-    function startRound() {
+    async function startRound() {
       if (!isHost()) return;
-      sb.from('votes').delete().eq('room_id', roomId);
-      sb.from('rooms').update({ status: 'voting', result: null }).eq('id', roomId);
+      await sb.from('votes').delete().eq('room_id', roomId);
+      await sb.from('rooms').update({ status: 'voting', result: null }).eq('id', roomId);
     }
 
-    function castVote(value) {
+    async function castVote(value) {
       if (isHost()) return;
-      sb.from('votes').upsert(
+      await sb.from('votes').upsert(
         { room_id: roomId, uid: uid, name: myName, value: value },
         { onConflict: 'room_id,uid' });
     }
 
-    function cancelVote() {
+    async function cancelVote() {
       if (isHost()) return;
-      sb.from('votes').delete().eq('room_id', roomId).eq('uid', uid);
+      await sb.from('votes').delete().eq('room_id', roomId).eq('uid', uid);
     }
 
-    function revealRound() {
+    async function revealRound() {
       if (!isHost() || (room.status || 'idle') !== 'voting') return;
       const rows = validVotes();
       const summary = computeSummary(rows.map(r => r.value));
-      sb.from('rooms').update({
+      await sb.from('rooms').update({
         status: 'done',
         result: { summary: summary, votes: rows }
       }).eq('id', roomId);
     }
 
-    function resetRound() {
+    async function resetRound() {
       if (!isHost()) return;
-      sb.from('votes').delete().eq('room_id', roomId);
-      sb.from('rooms').update({ status: 'idle', result: null }).eq('id', roomId);
+      await sb.from('votes').delete().eq('room_id', roomId);
+      await sb.from('rooms').update({ status: 'idle', result: null }).eq('id', roomId);
     }
 
     function computeSummary(values) {
