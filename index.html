@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Покер планирование</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="header">
+    <h1>Покер планирование</h1>
+    <div class="room-info hidden" id="roomInfo">
+      <span class="room-code" id="roomCode"></span>
+      <button class="btn small ghost" id="copyBtn">Скопировать ссылку</button>
+      <button class="btn small ghost" id="leaveBtn">Покинуть комнату</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="landing" class="card landing">
+      <h2>Покер планирование</h2>
+      <label for="nameInput">Ваше имя</label>
+      <input id="nameInput" type="text" placeholder="Например, Иван">
+      <label for="roleInput">Ваша роль</label>
+      <select id="roleInput">
+        <option value="participant" selected>Участник — голосует картами</option>
+        <option value="host">Ведущий — управляет голосованием</option>
+      </select>
+      <div class="row">
+        <button class="btn" id="createBtn">Создать комнату</button>
+      </div>
+      <label for="joinInput">Или введите код комнаты</label>
+      <div class="join-row">
+        <input id="joinInput" type="text" placeholder="ABC123" maxlength="6">
+        <button class="btn ghost" id="joinBtn">Войти</button>
+      </div>
+      <div id="landingMsg" class="msg err hidden"></div>
+      <div class="bender-quote" title="Futurama — «Мой собственный парк аттракционов»">
+        <svg class="bender-ico" viewBox="0 0 120 120" aria-hidden="true">
+          <defs>
+            <linearGradient id="bender-body" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f5f5f5"/>
+              <stop offset="1" stop-color="#b0bec5"/>
+            </linearGradient>
+          </defs>
+          <circle cx="60" cy="22" r="5" fill="#f9ab00"/>
+          <line x1="60" y1="26" x2="60" y2="38" stroke="#90a4ae" stroke-width="5" stroke-linecap="round"/>
+          <rect x="22" y="34" width="76" height="74" rx="18" fill="url(#bender-body)" stroke="#78909c" stroke-width="3"/>
+          <rect x="30" y="48" width="60" height="26" rx="13" fill="#1c1c1c"/>
+          <circle cx="42" cy="61" r="5" fill="#fff"/>
+          <circle cx="78" cy="61" r="5" fill="#fff"/>
+          <path d="M44 74 h32" stroke="#1c1c1c" stroke-width="3" stroke-linecap="round"/>
+          <path d="M46 84 q14 11 28 0" stroke="#1c1c1c" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span>Свой покер — с блэкджеком и профурсетками!</span>
+      </div>
+    </div>
+
+    <div id="room" class="hidden">
+      <div class="card">
+        <div class="round-head">
+          <span class="badge idle" id="roundBadge">Ожидает</span>
+          <div class="actions" id="hostActions"></div>
+        </div>
+
+        <div class="timer-row" id="timerRow">
+          <div class="timer-display" id="timerDisplay">
+            <svg class="timer-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="13" r="8"/>
+              <path d="M12 9v4l2.5 2.5"/>
+              <path d="M9 2h6"/>
+            </svg>
+            <span id="timerTime"></span>
+          </div>
+          <div class="timer-controls" id="timerControls"></div>
+        </div>
+
+        <div class="table-scene">
+          <div class="row-seats" id="seatsTop"></div>
+          <div class="mid">
+            <div class="col-seats" id="seatsLeft"></div>
+            <div class="table">
+              <div class="pot" id="pot"></div>
+            </div>
+            <div class="col-seats" id="seatsRight"></div>
+          </div>
+          <div class="row-seats" id="seatsBottom"></div>
+        </div>
+
+        <div class="votearea" id="voteArea"></div>
+      </div>
+
+      <div class="card">
+        <label>Участники (<span id="pCount">0</span>)</label>
+        <div class="participants" id="participants"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="supabase.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
